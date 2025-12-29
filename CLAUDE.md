@@ -1,3 +1,5 @@
+Use 'bd' for task tracking
+
 # Project Plan: "The Gifting Book" (Family Wishlist App)
 
 ## I. Context & Role
