@@ -27,9 +27,27 @@ export const Route = createFileRoute("/db-test")({
 
 function DbTest() {
 	const data = Route.useLoaderData();
+
+	const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+		e.preventDefault();
+		const formData = new FormData(e.currentTarget);
+		await createUser({
+			data: {
+				email: formData.get("email") as string,
+				name: formData.get("name") as string,
+			},
+		});
+		window.location.reload();
+	};
+
 	return (
 		<>
-			<form></form>
+			<h1>DB Test</h1>
+			<form onSubmit={handleSubmit}>
+				<input name="email" type="email" placeholder="Email" required />
+				<input name="name" type="text" placeholder="Name" required />
+				<button type="submit">Add User</button>
+			</form>
 			<pre>{JSON.stringify(data, null, 2)}</pre>
 		</>
 	);
