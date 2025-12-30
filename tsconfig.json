@@ -5,7 +5,12 @@
 		"jsx": "react-jsx",
 		"module": "ESNext",
 		"lib": ["ES2022", "DOM", "DOM.Iterable"],
-		"types": ["./worker-configuration.d.ts", "node", "vite/client"],
+		"types": [
+			"./worker-configuration.d.ts",
+			"node",
+			"vite/client",
+			"vitest/globals",
+		],
 
 		/* Bundler mode */
 		"moduleResolution": "bundler",
