@@ -2,15 +2,14 @@
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "gifty",
 	"compatibility_date": "2025-09-02",
-	"compatibility_flags": [
-		"nodejs_compat"
-	],
+	"compatibility_flags": ["nodejs_compat"],
 	"main": "@tanstack/react-start/server-entry",
 	"d1_databases": [
 		{
 			"binding": "gifty_db",
 			"database_name": "gifty-db",
-			"database_id": "6fbdc21e-4d8c-41c2-aae5-fc4d49787b72"
-		}
+			"database_id": "6fbdc21e-4d8c-41c2-aae5-fc4d49787b72",
+			"migrations_dir": "drizzle/migrations",
+		},
 	],
 }
