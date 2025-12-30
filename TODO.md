@@ -1,3 +1,9 @@
+  Logical next steps (Phase 2: Auth & Basic Lists):
+  1. Mock Auth (gifty-brq) - Test with multiple users without real auth
+  2. Wishlist CRUD (gifty-mi1) - Create wishlists
+  3. Item CRUD (gifty-zue) - Add items to wishlists
+  4. Seed Data (gifty-far) - Populate DB for testing
+  
 # TODO: The Gifting Book
 
 ## Phase 1: Initialization & Infrastructure
