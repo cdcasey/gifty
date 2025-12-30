@@ -1,5 +1,15 @@
 {
 	"permissions": {
-		"allow": ["Bash(bd update:*)"]
+		"allow": [
+			"Bash(bd :*)",
+			"Bash(bd update:*)",
+			"mcp__plugin_context7_context7__query-docs",
+			"WebFetch(domain:github.com)",
+			"Bash(bd close:*)",
+			"Bash(bd ready:*)",
+			"Bash(bd list:*)",
+			"Bash(bd status:*)",
+			"Bash(bd create:*)"
+		]
 	}
 }

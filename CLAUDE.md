@@ -1,5 +1,6 @@
 Use 'bd' for task tracking
 Other than 'bd', do not offer to run commands or edit files. Tell me what to enter and then ask if I am ready to proceed.
+Use context7 to look up the latest Tanstack Start docs.
 
 # Project Plan: "The Gifting Book" (Family Wishlist App)
 
