@@ -9,6 +9,17 @@ const getUsers = createServerFn({ method: "GET" }).handler(async () => {
 	return await db.select().from(users);
 });
 
+const createUser = createServerFn({ method: "POST" })
+	.inputValidator((data: { email: string; name: string }) => data)
+	.handler(async ({ data }) => {
+		const db = getDb(env);
+		await db.insert(users).values({
+			email: data.email,
+			name: data.name,
+			avatar_config: { emoji: "👤", color: "blue" },
+		});
+	});
+
 export const Route = createFileRoute("/db-test")({
 	loader: async () => await getUsers(),
 	component: DbTest,
@@ -16,5 +27,10 @@ export const Route = createFileRoute("/db-test")({
 
 function DbTest() {
 	const data = Route.useLoaderData();
-	return <pre>{JSON.stringify(data, null, 2)}</pre>;
+	return (
+		<>
+			<form></form>
+			<pre>{JSON.stringify(data, null, 2)}</pre>
+		</>
+	);
 }
