@@ -1,5 +1,8 @@
 {
-	"permissions": {
-		"allow": ["Bash(bd update:*)"]
-	}
+  "permissions": {
+    "allow": [
+      "Bash(bd :*)",
+      "Bash(bd update:*)"
+    ]
+  }
 }
