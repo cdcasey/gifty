@@ -9,7 +9,7 @@ import { cloudflare } from "@cloudflare/vite-plugin";
 const config = defineConfig({
 	plugins: [
 		devtools(),
-		cloudflare(),
+		cloudflare({ viteEnvironment: { name: "ssr" } }),
 		// this is the plugin that enables path aliases
 		viteTsConfigPaths({
 			projects: ["./tsconfig.json"],
