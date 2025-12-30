@@ -11,6 +11,7 @@
 		"cf-typegen": "wrangler types"
 	},
 	"dependencies": {
+		"@paralleldrive/cuid2": "^3.0.6",
 		"@tailwindcss/vite": "^4.1.18",
 		"@tanstack/react-devtools": "^0.9.0",
 		"@tanstack/react-router": "^1.144.0",
