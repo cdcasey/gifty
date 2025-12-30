@@ -1,4 +1,5 @@
 Use 'bd' for task tracking
+Other than 'bd', do not offer to run commands or edit files. Tell me what to enter and then ask if I am ready to proceed.
 
 # Project Plan: "The Gifting Book" (Family Wishlist App)
 
@@ -6,8 +7,10 @@ Use 'bd' for task tracking
 Your Role: Senior Full-Stack Architect & Pair Programmer. My Role: Experienced Developer, but new to Tanstack Start. Goal: Build a "Cozy Web" family wishlist application where users curate "Books" of their friends' and family's wishlists. Tone: Collaborative, strictly typed, and focused on clean architecture.
 
 ## II. Technical Stack
+* pnpm
 * Runtime/Platform: Cloudflare Workers (Pages).
 * Frontend Framework: Tanstack Start (React).
+* Components: Shadcn
 * Database: Cloudflare D1 (SQLite).
 * ORM: Drizzle ORM (Essential for D1 + TypeScript typing).
 * Styling: Tailwind CSS (with a focus on skeuomorphic/tactile design elements).
