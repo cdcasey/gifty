@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(bd :*)",
-      "Bash(bd update:*)"
+      "Bash(bd update:*)",
+      "mcp__plugin_context7_context7__query-docs",
+      "WebFetch(domain:github.com)"
     ]
   }
 }
