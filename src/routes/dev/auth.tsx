@@ -36,7 +36,9 @@ function DevAuth() {
 				{users.map((user) => (
 					<li key={user.id}>
 						{user.name} ({user.email})
-						<Button onClick={() => handleSelect(user.id)}>Login as</Button>
+						<Button onClick={() => handleSelect(user.id)} className="ml-4">
+							Login as
+						</Button>
 					</li>
 				))}
 			</ul>
