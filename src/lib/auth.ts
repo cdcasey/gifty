@@ -15,16 +15,16 @@ export const getCurrentUser = createServerFn({ method: "GET" }).handler(
 
 		const db = getDb(env);
 
-		// Keeping for reference. Equivalent.
-		// const [user] = await db
-		// 	.select()
-		// 	.from(users)
-		// 	.where(eq(users.id, userId))
-		// 	.limit(1);
+		const [user] = await db
+			.select()
+			.from(users)
+			.where(eq(users.id, userId))
+			.limit(1);
 
-		const user = await db.query.users.findFirst({
-			where: eq(users.id, userId),
-		});
+		// Keeping for reference. Equivalent.
+		// const user = await db.query.users.findFirst({
+		// 	where: eq(users.id, userId),
+		// });
 
 		return user ?? null;
 	},
