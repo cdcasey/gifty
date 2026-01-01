@@ -5,6 +5,7 @@ import { env } from "cloudflare:workers";
 import { getDb } from "@/db/client";
 import { users } from "@/db/schema";
 import { getCurrentUser, setMockUser } from "@/lib/auth";
+import { Button } from "@/components/ui/button";
 
 const getAllUsers = createServerFn({ method: "GET" }).handler(async () => {
 	const db = getDb(env);
@@ -21,7 +22,7 @@ export const Route = createFileRoute("/dev/auth")({
 
 function DevAuth() {
 	const { users, currentUser } = Route.useLoaderData();
-
+	console.log("RENDER");
 	const handleSelect = async (userId: string) => {
 		await setMockUser({ data: { userId } });
 		window.location.reload();
@@ -35,7 +36,7 @@ function DevAuth() {
 				{users.map((user) => (
 					<li key={user.id}>
 						{user.name} ({user.email})
-						<button onClick={() => handleSelect(user.id)}>Login as</button>
+						<Button onClick={() => handleSelect(user.id)}>Login as</Button>
 					</li>
 				))}
 			</ul>
