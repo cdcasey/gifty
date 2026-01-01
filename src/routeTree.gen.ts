@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as DbTestRouteImport } from './routes/db-test'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DevSeedRouteImport } from './routes/dev/seed'
 import { Route as DevAuthRouteImport } from './routes/dev/auth'
 import { Route as DemoStartServerFuncsRouteImport } from './routes/demo/start.server-funcs'
 import { Route as DemoStartApiRequestRouteImport } from './routes/demo/start.api-request'
@@ -28,6 +29,11 @@ const DbTestRoute = DbTestRouteImport.update({
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DevSeedRoute = DevSeedRouteImport.update({
+  id: '/dev/seed',
+  path: '/dev/seed',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DevAuthRoute = DevAuthRouteImport.update({
@@ -75,6 +81,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/db-test': typeof DbTestRoute
   '/dev/auth': typeof DevAuthRoute
+  '/dev/seed': typeof DevSeedRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
@@ -87,6 +94,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/db-test': typeof DbTestRoute
   '/dev/auth': typeof DevAuthRoute
+  '/dev/seed': typeof DevSeedRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
@@ -100,6 +108,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/db-test': typeof DbTestRoute
   '/dev/auth': typeof DevAuthRoute
+  '/dev/seed': typeof DevSeedRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
   '/demo/start/server-funcs': typeof DemoStartServerFuncsRoute
@@ -114,6 +123,7 @@ export interface FileRouteTypes {
     | '/'
     | '/db-test'
     | '/dev/auth'
+    | '/dev/seed'
     | '/demo/api/names'
     | '/demo/start/api-request'
     | '/demo/start/server-funcs'
@@ -126,6 +136,7 @@ export interface FileRouteTypes {
     | '/'
     | '/db-test'
     | '/dev/auth'
+    | '/dev/seed'
     | '/demo/api/names'
     | '/demo/start/api-request'
     | '/demo/start/server-funcs'
@@ -138,6 +149,7 @@ export interface FileRouteTypes {
     | '/'
     | '/db-test'
     | '/dev/auth'
+    | '/dev/seed'
     | '/demo/api/names'
     | '/demo/start/api-request'
     | '/demo/start/server-funcs'
@@ -151,6 +163,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DbTestRoute: typeof DbTestRoute
   DevAuthRoute: typeof DevAuthRoute
+  DevSeedRoute: typeof DevSeedRoute
   DemoApiNamesRoute: typeof DemoApiNamesRoute
   DemoStartApiRequestRoute: typeof DemoStartApiRequestRoute
   DemoStartServerFuncsRoute: typeof DemoStartServerFuncsRoute
@@ -174,6 +187,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dev/seed': {
+      id: '/dev/seed'
+      path: '/dev/seed'
+      fullPath: '/dev/seed'
+      preLoaderRoute: typeof DevSeedRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dev/auth': {
@@ -239,6 +259,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DbTestRoute: DbTestRoute,
   DevAuthRoute: DevAuthRoute,
+  DevSeedRoute: DevSeedRoute,
   DemoApiNamesRoute: DemoApiNamesRoute,
   DemoStartApiRequestRoute: DemoStartApiRequestRoute,
   DemoStartServerFuncsRoute: DemoStartServerFuncsRoute,
