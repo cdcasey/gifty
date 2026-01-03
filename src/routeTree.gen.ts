@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as DbTestRouteImport } from './routes/db-test'
+import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as DevSeedRouteImport } from './routes/dev/seed'
 import { Route as DevAuthRouteImport } from './routes/dev/auth'
@@ -24,6 +25,11 @@ import { Route as DemoStartSsrDataOnlyRouteImport } from './routes/demo/start.ss
 const DbTestRoute = DbTestRouteImport.update({
   id: '/db-test',
   path: '/db-test',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DashboardRoute = DashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -79,6 +85,7 @@ const DemoStartSsrDataOnlyRoute = DemoStartSsrDataOnlyRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/dashboard': typeof DashboardRoute
   '/db-test': typeof DbTestRoute
   '/dev/auth': typeof DevAuthRoute
   '/dev/seed': typeof DevSeedRoute
@@ -92,6 +99,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/dashboard': typeof DashboardRoute
   '/db-test': typeof DbTestRoute
   '/dev/auth': typeof DevAuthRoute
   '/dev/seed': typeof DevSeedRoute
@@ -106,6 +114,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/dashboard': typeof DashboardRoute
   '/db-test': typeof DbTestRoute
   '/dev/auth': typeof DevAuthRoute
   '/dev/seed': typeof DevSeedRoute
@@ -121,6 +130,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/dashboard'
     | '/db-test'
     | '/dev/auth'
     | '/dev/seed'
@@ -134,6 +144,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/dashboard'
     | '/db-test'
     | '/dev/auth'
     | '/dev/seed'
@@ -147,6 +158,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/dashboard'
     | '/db-test'
     | '/dev/auth'
     | '/dev/seed'
@@ -161,6 +173,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  DashboardRoute: typeof DashboardRoute
   DbTestRoute: typeof DbTestRoute
   DevAuthRoute: typeof DevAuthRoute
   DevSeedRoute: typeof DevSeedRoute
@@ -180,6 +193,13 @@ declare module '@tanstack/react-router' {
       path: '/db-test'
       fullPath: '/db-test'
       preLoaderRoute: typeof DbTestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/dashboard': {
+      id: '/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof DashboardRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -257,6 +277,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  DashboardRoute: DashboardRoute,
   DbTestRoute: DbTestRoute,
   DevAuthRoute: DevAuthRoute,
   DevSeedRoute: DevSeedRoute,

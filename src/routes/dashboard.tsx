@@ -1,0 +1,44 @@
+import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createServerFn } from "@tanstack/react-start";
+import { env } from "cloudflare:workers";
+import { eq } from "drizzle-orm";
+import { getDb } from "@/db/client";
+import { wishlists } from "@/db/schema";
+import { getCurrentUser } from "@/lib/auth";
+
+const getMyWishlists = createServerFn({ method: "GET" }).handler(async () => {
+	const user = await getCurrentUser();
+	if (!user) throw redirect({ to: "/dev/auth" });
+
+	const db = getDb(env);
+	const myWishlists = await db
+		.select()
+		.from(wishlists)
+		.where(eq(wishlists.owner_id, user.id));
+
+	return { user, wishlists: myWishlists };
+});
+
+export const Route = createFileRoute("/dashboard")({
+	loader: () => getMyWishlists(),
+	component: Dashboard,
+});
+
+function Dashboard() {
+	const { user, wishlists } = Route.useLoaderData();
+
+	return (
+		<div>
+			<h1>{user.name}'s Wishlists</h1>
+			{wishlists.length === 0 ? (
+				<p>No wishlists yet.</p>
+			) : (
+				<ul>
+					{wishlists.map((list) => (
+						<li key={list.id}>{list.title}</li>
+					))}
+				</ul>
+			)}
+		</div>
+	);
+}
