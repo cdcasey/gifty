@@ -1,0 +1,10 @@
+{
+	"project_name": "gifty",
+	"file_scan_exclusions": [
+		"node_modules",
+		"target",
+		".cache",
+		"dist",
+		"src/components/ui",
+	],
+}
