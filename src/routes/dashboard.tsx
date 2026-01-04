@@ -19,6 +19,24 @@ const getMyWishlists = createServerFn({ method: "GET" }).handler(async () => {
 	return { user, wishlists: myWishlists };
 });
 
+const createWishlist = createServerFn({ method: "POST" })
+	.inputValidator((data: { title: string }) => data)
+	.handler(async ({ data }) => {
+		const user = await getCurrentUser();
+		if (!user) throw new Error("Not authenticated");
+
+		const db = getDb(env);
+		const [newList] = await db
+			.insert(wishlists)
+			.values({
+				owner_id: user.id,
+				title: data.title,
+			})
+			.returning();
+
+		return newList;
+	});
+
 export const Route = createFileRoute("/dashboard")({
 	loader: () => getMyWishlists(),
 	component: Dashboard,
