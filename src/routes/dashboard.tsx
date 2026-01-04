@@ -1,4 +1,4 @@
-import { createFileRoute, redirect } from "@tanstack/react-router";
+import { createFileRoute, redirect, Link } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { env } from "cloudflare:workers";
 import { eq } from "drizzle-orm";
@@ -35,7 +35,11 @@ function Dashboard() {
 			) : (
 				<ul>
 					{wishlists.map((list) => (
-						<li key={list.id}>{list.title}</li>
+						<li key={list.id}>
+							<Link to="/wishlists/$id" params={{ id: list.id }}>
+								{list.title}
+							</Link>
+						</li>
 					))}
 				</ul>
 			)}
