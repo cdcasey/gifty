@@ -1,8 +1,9 @@
 import { createServerFn } from "@tanstack/react-start";
 import { env } from "cloudflare:workers";
 import { eq, and } from "drizzle-orm";
+
 import { getDb } from "@/db/client";
-import { dibs } from "@/db/schema";
+import { users, wishlists, items, dibs } from "@/db/schema";
 import { getCurrentUser } from "./auth";
 
 export const toggleDibs = createServerFn({ method: "POST" })
@@ -50,4 +51,43 @@ export const toggleDibs = createServerFn({ method: "POST" })
 				.returning();
 			return created;
 		}
+	});
+
+export const getWishlistItemsWithDibs = createServerFn({ method: "GET" })
+	.inputValidator((wishlistId: string) => wishlistId)
+	.handler(async ({ data: wishlistId }) => {
+		const currentUser = await getCurrentUser();
+		if (!currentUser) throw new Error("Not authenticated");
+
+		const db = getDb(env);
+
+		// Get the wishlist to check ownership
+		const [wishlist] = await db
+			.select()
+			.from(wishlists)
+			.where(eq(wishlists.id, wishlistId))
+			.limit(1);
+
+		if (!wishlist) throw new Error("Wishlist not found");
+
+		const isOwner = wishlist.owner_id === currentUser.id;
+
+		// Fetch items with dibs info
+		const itemsWithDibs = await db
+			.select({
+				item: items,
+				dibs: dibs,
+				claimedByUser: isOwner ? null : users, // Hide user for owner
+			})
+			.from(items)
+			.leftJoin(dibs, eq(items.id, dibs.item_id))
+			.leftJoin(users, eq(dibs.user_id, users.id))
+			.where(eq(items.wishlist_id, wishlistId));
+
+		return {
+			wishlist,
+			isOwner,
+			items: itemsWithDibs,
+			currentUserId: currentUser.id,
+		};
 	});
