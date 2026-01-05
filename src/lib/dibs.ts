@@ -73,16 +73,23 @@ export const getWishlistItemsWithDibs = createServerFn({ method: "GET" })
 		const isOwner = wishlist.owner_id === currentUser.id;
 
 		// Fetch items with dibs info
-		const itemsWithDibs = await db
+		const rawItems = await db
 			.select({
 				item: items,
 				dibs: dibs,
-				claimedByUser: isOwner ? null : users, // Hide user for owner
+				claimedByUser: users,
 			})
 			.from(items)
 			.leftJoin(dibs, eq(items.id, dibs.item_id))
 			.leftJoin(users, eq(dibs.user_id, users.id))
 			.where(eq(items.wishlist_id, wishlistId));
+
+		// Apply spoiler protection: hide who claimed items from owner
+		const itemsWithDibs = rawItems.map((row) => ({
+			item: row.item,
+			dibs: row.dibs,
+			claimedBy: isOwner ? null : row.claimedByUser,
+		}));
 
 		return {
 			wishlist,
