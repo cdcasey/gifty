@@ -1,6 +1,6 @@
-import { sql } from "drizzle-orm";
-import { sqliteTable, text, integer } from "drizzle-orm/sqlite-core";
 import { createId } from "@paralleldrive/cuid2";
+import { sql } from "drizzle-orm";
+import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
 // .$onUpdate(() => new Date()), tells Drizzle to silently
 // intercepts the call and insert the current timestamp
@@ -42,6 +42,7 @@ export const wishlists = sqliteTable("wishlists", {
 		.notNull()
 		.default(sql`(unixepoch())`)
 		.$onUpdate(() => new Date()),
+	share_token: text("share_token").unique(),
 });
 
 export const items = sqliteTable("items", {
@@ -130,6 +131,25 @@ export const dibs = sqliteTable("dibs", {
 		.$onUpdate(() => new Date()),
 });
 
+export const wishlistShares = sqliteTable("wishlist_shares", {
+	id: text("id")
+		.primaryKey()
+		.$defaultFn(() => createId()),
+	wishlist_id: text("wishlist_id")
+		.notNull()
+		.references(() => wishlists.id),
+	shared_with_user_id: text("shared_with_user_id")
+		.notNull()
+		.references(() => users.id),
+	created_at: integer("created_at", { mode: "timestamp" })
+		.notNull()
+		.default(sql`(unixepoch())`),
+	updated_at: integer("updated_at", { mode: "timestamp" })
+		.notNull()
+		.default(sql`(unixepoch())`)
+		.$onUpdate(() => new Date()),
+});
+
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
 export type Wishlist = typeof wishlists.$inferSelect;
@@ -142,3 +162,5 @@ export type BookEntry = typeof bookEntries.$inferSelect;
 export type NewBookEntry = typeof bookEntries.$inferInsert;
 export type Dibs = typeof dibs.$inferSelect;
 export type NewDibs = typeof dibs.$inferInsert;
+export type WishlistShare = typeof wishlistShares.$inferSelect;
+export type NewWishlistShare = typeof wishlistShares.$inferInsert;
