@@ -1,6 +1,8 @@
+import { useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { env } from "cloudflare:workers";
+import { generateShareToken } from "@/lib/share";
 
 import { getDb } from "@/db/client";
 import { items } from "@/db/schema";
@@ -43,6 +45,24 @@ export const Route = createFileRoute("/wishlists/$id")({
 	component: ViewWishlist,
 });
 
+function ShareButton({ wishlistId }: { wishlistId: string }) {
+	const [copied, setCopied] = useState(false);
+
+	const handleShare = async () => {
+		const { token } = await generateShareToken({ data: wishlistId });
+		const url = `${window.location.origin}/share/${token}`;
+		await navigator.clipboard.writeText(url);
+		setCopied(true);
+		setTimeout(() => setCopied(false), 2000);
+	};
+
+	return (
+		<Button variant="outline" onClick={handleShare}>
+			{copied ? "Copied!" : "Share"}
+		</Button>
+	);
+}
+
 function ViewWishlist() {
 	const { wishlist, items, isOwner, currentUserId } = Route.useLoaderData();
 
@@ -66,7 +86,10 @@ function ViewWishlist() {
 	return (
 		<div>
 			<Link to="/dashboard">← back</Link>
-			<h1>{wishlist.title}</h1>
+			<div className="flex items-center gap-4">
+				<h1>{wishlist.title}</h1>
+				{isOwner && <ShareButton wishlistId={wishlist.id} />}
+			</div>
 
 			<form onSubmit={handleAddItem} className="space-y-3 my-4 max-w-md">
 				<Input name="name" placeholder="Item name" required />

@@ -13,6 +13,7 @@ import { Route as DbTestRouteImport } from './routes/db-test'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as WishlistsIdRouteImport } from './routes/wishlists/$id'
+import { Route as ShareTokenRouteImport } from './routes/share/$token'
 import { Route as DevSeedRouteImport } from './routes/dev/seed'
 import { Route as DevAuthRouteImport } from './routes/dev/auth'
 import { Route as DemoStartServerFuncsRouteImport } from './routes/demo/start.server-funcs'
@@ -41,6 +42,11 @@ const IndexRoute = IndexRouteImport.update({
 const WishlistsIdRoute = WishlistsIdRouteImport.update({
   id: '/wishlists/$id',
   path: '/wishlists/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ShareTokenRoute = ShareTokenRouteImport.update({
+  id: '/share/$token',
+  path: '/share/$token',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DevSeedRoute = DevSeedRouteImport.update({
@@ -95,6 +101,7 @@ export interface FileRoutesByFullPath {
   '/db-test': typeof DbTestRoute
   '/dev/auth': typeof DevAuthRoute
   '/dev/seed': typeof DevSeedRoute
+  '/share/$token': typeof ShareTokenRoute
   '/wishlists/$id': typeof WishlistsIdRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
@@ -110,6 +117,7 @@ export interface FileRoutesByTo {
   '/db-test': typeof DbTestRoute
   '/dev/auth': typeof DevAuthRoute
   '/dev/seed': typeof DevSeedRoute
+  '/share/$token': typeof ShareTokenRoute
   '/wishlists/$id': typeof WishlistsIdRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
@@ -126,6 +134,7 @@ export interface FileRoutesById {
   '/db-test': typeof DbTestRoute
   '/dev/auth': typeof DevAuthRoute
   '/dev/seed': typeof DevSeedRoute
+  '/share/$token': typeof ShareTokenRoute
   '/wishlists/$id': typeof WishlistsIdRoute
   '/demo/api/names': typeof DemoApiNamesRoute
   '/demo/start/api-request': typeof DemoStartApiRequestRoute
@@ -143,6 +152,7 @@ export interface FileRouteTypes {
     | '/db-test'
     | '/dev/auth'
     | '/dev/seed'
+    | '/share/$token'
     | '/wishlists/$id'
     | '/demo/api/names'
     | '/demo/start/api-request'
@@ -158,6 +168,7 @@ export interface FileRouteTypes {
     | '/db-test'
     | '/dev/auth'
     | '/dev/seed'
+    | '/share/$token'
     | '/wishlists/$id'
     | '/demo/api/names'
     | '/demo/start/api-request'
@@ -173,6 +184,7 @@ export interface FileRouteTypes {
     | '/db-test'
     | '/dev/auth'
     | '/dev/seed'
+    | '/share/$token'
     | '/wishlists/$id'
     | '/demo/api/names'
     | '/demo/start/api-request'
@@ -189,6 +201,7 @@ export interface RootRouteChildren {
   DbTestRoute: typeof DbTestRoute
   DevAuthRoute: typeof DevAuthRoute
   DevSeedRoute: typeof DevSeedRoute
+  ShareTokenRoute: typeof ShareTokenRoute
   WishlistsIdRoute: typeof WishlistsIdRoute
   DemoApiNamesRoute: typeof DemoApiNamesRoute
   DemoStartApiRequestRoute: typeof DemoStartApiRequestRoute
@@ -227,6 +240,13 @@ declare module '@tanstack/react-router' {
       path: '/wishlists/$id'
       fullPath: '/wishlists/$id'
       preLoaderRoute: typeof WishlistsIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/share/$token': {
+      id: '/share/$token'
+      path: '/share/$token'
+      fullPath: '/share/$token'
+      preLoaderRoute: typeof ShareTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/dev/seed': {
@@ -301,6 +321,7 @@ const rootRouteChildren: RootRouteChildren = {
   DbTestRoute: DbTestRoute,
   DevAuthRoute: DevAuthRoute,
   DevSeedRoute: DevSeedRoute,
+  ShareTokenRoute: ShareTokenRoute,
   WishlistsIdRoute: WishlistsIdRoute,
   DemoApiNamesRoute: DemoApiNamesRoute,
   DemoStartApiRequestRoute: DemoStartApiRequestRoute,

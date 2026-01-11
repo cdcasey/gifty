@@ -6,6 +6,7 @@ import { eq } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { wishlists } from "@/db/schema";
 import { getCurrentUser } from "@/lib/auth";
+import { getSharedWishlists } from "@/lib/share";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -19,7 +20,9 @@ const getMyWishlists = createServerFn({ method: "GET" }).handler(async () => {
 		.from(wishlists)
 		.where(eq(wishlists.owner_id, user.id));
 
-	return { user, wishlists: myWishlists };
+	const sharedWithMe = await getSharedWishlists();
+
+	return { user, wishlists: myWishlists, sharedWithMe };
 });
 
 const createWishlist = createServerFn({ method: "POST" })
@@ -46,7 +49,7 @@ export const Route = createFileRoute("/dashboard")({
 });
 
 function Dashboard() {
-	const { user, wishlists } = Route.useLoaderData();
+	const { user, wishlists, sharedWithMe } = Route.useLoaderData();
 
 	const handleCreate = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
@@ -83,6 +86,24 @@ function Dashboard() {
 						</li>
 					))}
 				</ul>
+			)}
+
+			{sharedWithMe.length > 0 && (
+				<>
+					<h2 className="mt-8 text-xl font-semibold">Shared with Me</h2>
+					<ul>
+						{sharedWithMe.map(({ wishlist, owner }) => (
+							<li key={wishlist.id}>
+								<Link to="/wishlists/$id" params={{ id: wishlist.id }}>
+									{wishlist.title}
+								</Link>
+								<span className="text-muted-foreground ml-2">
+									by {owner.name}
+								</span>
+							</li>
+						))}
+					</ul>
+				</>
 			)}
 		</div>
 	);
