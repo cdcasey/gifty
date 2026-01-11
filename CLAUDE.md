@@ -2,31 +2,6 @@ Use 'bd' for task tracking
 Other than 'bd', do not offer to run commands or edit files. Tell me what to enter and then ask if I am ready to proceed.
 Use context7 to look up the latest Tanstack Start docs.
 
-## Session Notes (2026-01-07)
-
-### In Progress
-- **gifty-zxi**: Invite system - partially complete
-  - ✅ Created `wishlist_shares` table and `share_token` field on wishlists
-  - ✅ Migration generated and applied locally
-  - ✅ Created `src/lib/share.ts` with `generateShareToken`, `acceptShare`, `getSharedWishlists`
-  - ✅ Created `src/routes/share/$token.tsx` for accepting share links
-  - ⏳ Still needed:
-    - Add "Share" button to wishlist view (for owners to generate/copy share link)
-    - Update dashboard to show shared wishlists (use `getSharedWishlists`)
-    - Apply migration to remote: `npx wrangler d1 migrations apply gifty-db --remote`
-
-### Known Issues
-- Item editing not implemented yet (noted for later)
-
-### Completed This Session
-- Database schema with all tables (users, wishlists, items, books, bookEntries, dibs, wishlistShares)
-- Mock auth system (`/dev/auth`)
-- Seed data route (`/dev/seed`)
-- Dashboard showing user's wishlists
-- Wishlist view with item creation
-- Dibs system with spoiler protection (owner sees "Claimed", friends see who claimed)
-- ItemRow component with dibs/purchased checkboxes
-
 # Project Plan: "The Gifting Book" (Family Wishlist App)
 
 ## I. Context & Role
