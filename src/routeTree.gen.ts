@@ -16,6 +16,7 @@ import { Route as WishlistsIdRouteImport } from './routes/wishlists/$id'
 import { Route as ShareTokenRouteImport } from './routes/share/$token'
 import { Route as DevSeedRouteImport } from './routes/dev/seed'
 import { Route as DevAuthRouteImport } from './routes/dev/auth'
+import { Route as ApiHealthRouteImport } from './routes/api.health'
 import { Route as DemoStartServerFuncsRouteImport } from './routes/demo/start.server-funcs'
 import { Route as DemoStartApiRequestRouteImport } from './routes/demo/start.api-request'
 import { Route as DemoApiNamesRouteImport } from './routes/demo/api.names'
@@ -59,6 +60,11 @@ const DevAuthRoute = DevAuthRouteImport.update({
   path: '/dev/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiHealthRoute = ApiHealthRouteImport.update({
+  id: '/api/health',
+  path: '/api/health',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DemoStartServerFuncsRoute = DemoStartServerFuncsRouteImport.update({
   id: '/demo/start/server-funcs',
   path: '/demo/start/server-funcs',
@@ -99,6 +105,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/db-test': typeof DbTestRoute
+  '/api/health': typeof ApiHealthRoute
   '/dev/auth': typeof DevAuthRoute
   '/dev/seed': typeof DevSeedRoute
   '/share/$token': typeof ShareTokenRoute
@@ -115,6 +122,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/db-test': typeof DbTestRoute
+  '/api/health': typeof ApiHealthRoute
   '/dev/auth': typeof DevAuthRoute
   '/dev/seed': typeof DevSeedRoute
   '/share/$token': typeof ShareTokenRoute
@@ -132,6 +140,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/db-test': typeof DbTestRoute
+  '/api/health': typeof ApiHealthRoute
   '/dev/auth': typeof DevAuthRoute
   '/dev/seed': typeof DevSeedRoute
   '/share/$token': typeof ShareTokenRoute
@@ -150,6 +159,7 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/db-test'
+    | '/api/health'
     | '/dev/auth'
     | '/dev/seed'
     | '/share/$token'
@@ -166,6 +176,7 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/db-test'
+    | '/api/health'
     | '/dev/auth'
     | '/dev/seed'
     | '/share/$token'
@@ -182,6 +193,7 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/db-test'
+    | '/api/health'
     | '/dev/auth'
     | '/dev/seed'
     | '/share/$token'
@@ -199,6 +211,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DashboardRoute: typeof DashboardRoute
   DbTestRoute: typeof DbTestRoute
+  ApiHealthRoute: typeof ApiHealthRoute
   DevAuthRoute: typeof DevAuthRoute
   DevSeedRoute: typeof DevSeedRoute
   ShareTokenRoute: typeof ShareTokenRoute
@@ -263,6 +276,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DevAuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/health': {
+      id: '/api/health'
+      path: '/api/health'
+      fullPath: '/api/health'
+      preLoaderRoute: typeof ApiHealthRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/demo/start/server-funcs': {
       id: '/demo/start/server-funcs'
       path: '/demo/start/server-funcs'
@@ -319,6 +339,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRoute: DashboardRoute,
   DbTestRoute: DbTestRoute,
+  ApiHealthRoute: ApiHealthRoute,
   DevAuthRoute: DevAuthRoute,
   DevSeedRoute: DevSeedRoute,
   ShareTokenRoute: ShareTokenRoute,
