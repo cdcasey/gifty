@@ -1,9 +1,25 @@
 import { createServerFn } from "@tanstack/react-start";
 import { env } from "cloudflare:workers";
-import { and, eq } from "drizzle-orm";
+import { and, eq, desc } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { bookEntries, books, wishlistShares, wishlists } from "@/db/schema";
 import { getCurrentUser } from "./auth";
+
+export const getUserBooks = createServerFn({ method: "GET" })
+	.handler(async () => {
+		const user = await getCurrentUser();
+		if (!user) return [];
+
+		const db = getDb(env);
+
+		const userBooks = await db
+			.select()
+			.from(books)
+			.where(eq(books.owner_id, user.id))
+			.orderBy(desc(books.year), desc(books.created_at));
+
+		return userBooks;
+	});
 
 export const addWishlistToBook = createServerFn({ method: "POST" })
 	.inputValidator((data: { bookId: string; wishlistId: string }) => data)
