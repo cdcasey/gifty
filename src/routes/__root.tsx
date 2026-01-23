@@ -2,8 +2,6 @@ import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 
-import { SidebarProvider } from '@/components/ui/sidebar'
-import { AppSidebar } from '@/components/AppSidebar'
 import Header from '../components/Header'
 
 import appCss from '../styles.css?url'
@@ -19,7 +17,7 @@ export const Route = createRootRoute({
         content: 'width=device-width, initial-scale=1',
       },
       {
-        title: 'The Gifting Book',
+        title: 'TanStack Start Starter',
       },
     ],
     links: [
@@ -40,13 +38,8 @@ function RootDocument({ children }: { children: React.ReactNode }) {
         <HeadContent />
       </head>
       <body>
-        <SidebarProvider>
-          <AppSidebar />
-          <main className="flex-1 flex flex-col min-h-screen">
-            <Header />
-            {children}
-          </main>
-        </SidebarProvider>
+        <Header />
+        {children}
         <TanStackDevtools
           config={{
             position: 'bottom-right',
