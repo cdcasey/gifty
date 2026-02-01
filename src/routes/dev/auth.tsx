@@ -4,7 +4,7 @@ import { env } from "cloudflare:workers";
 
 import { getDb } from "@/db/client";
 import { users } from "@/db/schema";
-import { getCurrentUser, setMockUser } from "@/lib/auth";
+import { devLogin, getCurrentUser, logout } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 
 const getAllUsers = createServerFn({ method: "GET" }).handler(async () => {
@@ -24,7 +24,12 @@ function DevAuth() {
 	const { users, currentUser } = Route.useLoaderData();
 	console.log("RENDER");
 	const handleSelect = async (userId: string) => {
-		await setMockUser({ data: { userId } });
+		await devLogin({ data: { userId } });
+		window.location.reload();
+	};
+
+	const handleLogout = async () => {
+		await logout();
 		window.location.reload();
 	};
 
@@ -32,6 +37,11 @@ function DevAuth() {
 		<div>
 			<h1>Dev Auth</h1>
 			<p>Current: {currentUser?.name ?? "None"}</p>
+			{currentUser && (
+				<Button onClick={handleLogout} variant="outline" className="mb-4">
+					Logout
+				</Button>
+			)}
 			<ul>
 				{users.map((user) => (
 					<li key={user.id}>

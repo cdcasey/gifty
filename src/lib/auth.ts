@@ -149,3 +149,36 @@ export const verifyMagicLink = createServerFn({ method: "POST" })
 
 		return { success: true, user };
 	});
+
+export const devLogin = createServerFn({ method: "POST" })
+	.inputValidator((data: { userId: string }) => data)
+	.handler(async ({ data }) => {
+		const db = getDb(env);
+
+		const [user] = await db
+			.select()
+			.from(users)
+			.where(eq(users.id, data.userId))
+			.limit(1);
+
+		if (!user) {
+			throw new Error("User not found");
+		}
+
+		const sessionToken = createId();
+		const sessionExpires = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
+
+		await db.insert(sessions).values({
+			user_id: user.id,
+			token: sessionToken,
+			expires_at: sessionExpires,
+		});
+
+		setCookie(SESSION_COOKIE, sessionToken, {
+			httpOnly: true,
+			path: "/",
+			expires: sessionExpires,
+		});
+
+		return { success: true, user };
+	});
