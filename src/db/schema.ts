@@ -25,6 +25,20 @@ export const users = sqliteTable("users", {
 		.$onUpdate(() => new Date()),
 });
 
+export const sessions = sqliteTable("sessions", {
+	id: text("id")
+		.primaryKey()
+		.$defaultFn(() => createId()),
+	user_id: text("user_id")
+		.notNull()
+		.references(() => users.id),
+	token: text("token").notNull().unique(),
+	expires_at: integer("expires_at", { mode: "timestamp" }).notNull(),
+	created_at: integer("created_at", { mode: "timestamp" })
+		.notNull()
+		.default(sql`(unixepoch())`),
+});
+
 export const wishlists = sqliteTable("wishlists", {
 	id: text("id")
 		.primaryKey()
@@ -152,6 +166,8 @@ export const wishlistShares = sqliteTable("wishlist_shares", {
 
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
+export type Session = typeof sessions.$inferSelect;
+export type NewSession = typeof sessions.$inferInsert;
 export type Wishlist = typeof wishlists.$inferSelect;
 export type NewWishlist = typeof wishlists.$inferInsert;
 export type Item = typeof items.$inferSelect;
