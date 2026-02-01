@@ -1,5 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, notFound } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
+import { getRequestUrl } from "@tanstack/react-start/server";
 import { env } from "cloudflare:workers";
 
 import { getDb } from "@/db/client";
@@ -7,16 +8,28 @@ import { users } from "@/db/schema";
 import { devLogin, getCurrentUser, logout } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 
+const checkDevOnly = createServerFn({ method: "GET" }).handler(async () => {
+	const url = getRequestUrl();
+	const isLocal = url.hostname === "localhost" || url.hostname === "127.0.0.1";
+	return isLocal;
+});
+
 const getAllUsers = createServerFn({ method: "GET" }).handler(async () => {
 	const db = getDb(env);
 	return await db.select().from(users);
 });
 
 export const Route = createFileRoute("/dev/auth")({
-	loader: async () => ({
-		users: await getAllUsers(),
-		currentUser: await getCurrentUser(),
-	}),
+	loader: async () => {
+		const isLocal = await checkDevOnly();
+		if (!isLocal) {
+			throw notFound();
+		}
+		return {
+			users: await getAllUsers(),
+			currentUser: await getCurrentUser(),
+		};
+	},
 	component: DevAuth,
 });
 
