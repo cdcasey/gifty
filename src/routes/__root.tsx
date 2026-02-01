@@ -1,14 +1,29 @@
-import { HeadContent, Scripts, createRootRoute } from '@tanstack/react-router'
+import { HeadContent, Scripts, createRootRoute, redirect } from '@tanstack/react-router'
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools'
 import { TanStackDevtools } from '@tanstack/react-devtools'
 
 import { SidebarProvider } from '@/components/ui/sidebar'
 import { AppSidebar } from '@/components/AppSidebar'
 import Header from '../components/Header'
+import { getCurrentUser } from '@/lib/auth'
 
 import appCss from '../styles.css?url'
 
+const PUBLIC_ROUTES = ['/login', '/auth/verify']
+
 export const Route = createRootRoute({
+  beforeLoad: async ({ location }) => {
+    if (PUBLIC_ROUTES.some((route) => location.pathname.startsWith(route))) {
+      return
+    }
+    if (location.pathname.startsWith('/dev/')) {
+      return
+    }
+    const user = await getCurrentUser()
+    if (!user) {
+      throw redirect({ to: '/login' })
+    }
+  },
   head: () => ({
     meta: [
       {
