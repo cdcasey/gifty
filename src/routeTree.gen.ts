@@ -17,6 +17,7 @@ import { Route as WishlistsIdRouteImport } from './routes/wishlists/$id'
 import { Route as ShareTokenRouteImport } from './routes/share/$token'
 import { Route as DevSeedRouteImport } from './routes/dev/seed'
 import { Route as DevAuthRouteImport } from './routes/dev/auth'
+import { Route as AuthVerifyRouteImport } from './routes/auth/verify'
 import { Route as ApiHealthRouteImport } from './routes/api.health'
 import { Route as DemoStartServerFuncsRouteImport } from './routes/demo/start.server-funcs'
 import { Route as DemoStartApiRequestRouteImport } from './routes/demo/start.api-request'
@@ -66,6 +67,11 @@ const DevAuthRoute = DevAuthRouteImport.update({
   path: '/dev/auth',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthVerifyRoute = AuthVerifyRouteImport.update({
+  id: '/auth/verify',
+  path: '/auth/verify',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiHealthRoute = ApiHealthRouteImport.update({
   id: '/api/health',
   path: '/api/health',
@@ -113,6 +119,7 @@ export interface FileRoutesByFullPath {
   '/db-test': typeof DbTestRoute
   '/login': typeof LoginRoute
   '/api/health': typeof ApiHealthRoute
+  '/auth/verify': typeof AuthVerifyRoute
   '/dev/auth': typeof DevAuthRoute
   '/dev/seed': typeof DevSeedRoute
   '/share/$token': typeof ShareTokenRoute
@@ -131,6 +138,7 @@ export interface FileRoutesByTo {
   '/db-test': typeof DbTestRoute
   '/login': typeof LoginRoute
   '/api/health': typeof ApiHealthRoute
+  '/auth/verify': typeof AuthVerifyRoute
   '/dev/auth': typeof DevAuthRoute
   '/dev/seed': typeof DevSeedRoute
   '/share/$token': typeof ShareTokenRoute
@@ -150,6 +158,7 @@ export interface FileRoutesById {
   '/db-test': typeof DbTestRoute
   '/login': typeof LoginRoute
   '/api/health': typeof ApiHealthRoute
+  '/auth/verify': typeof AuthVerifyRoute
   '/dev/auth': typeof DevAuthRoute
   '/dev/seed': typeof DevSeedRoute
   '/share/$token': typeof ShareTokenRoute
@@ -170,6 +179,7 @@ export interface FileRouteTypes {
     | '/db-test'
     | '/login'
     | '/api/health'
+    | '/auth/verify'
     | '/dev/auth'
     | '/dev/seed'
     | '/share/$token'
@@ -188,6 +198,7 @@ export interface FileRouteTypes {
     | '/db-test'
     | '/login'
     | '/api/health'
+    | '/auth/verify'
     | '/dev/auth'
     | '/dev/seed'
     | '/share/$token'
@@ -206,6 +217,7 @@ export interface FileRouteTypes {
     | '/db-test'
     | '/login'
     | '/api/health'
+    | '/auth/verify'
     | '/dev/auth'
     | '/dev/seed'
     | '/share/$token'
@@ -225,6 +237,7 @@ export interface RootRouteChildren {
   DbTestRoute: typeof DbTestRoute
   LoginRoute: typeof LoginRoute
   ApiHealthRoute: typeof ApiHealthRoute
+  AuthVerifyRoute: typeof AuthVerifyRoute
   DevAuthRoute: typeof DevAuthRoute
   DevSeedRoute: typeof DevSeedRoute
   ShareTokenRoute: typeof ShareTokenRoute
@@ -296,6 +309,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DevAuthRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/verify': {
+      id: '/auth/verify'
+      path: '/auth/verify'
+      fullPath: '/auth/verify'
+      preLoaderRoute: typeof AuthVerifyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/health': {
       id: '/api/health'
       path: '/api/health'
@@ -361,6 +381,7 @@ const rootRouteChildren: RootRouteChildren = {
   DbTestRoute: DbTestRoute,
   LoginRoute: LoginRoute,
   ApiHealthRoute: ApiHealthRoute,
+  AuthVerifyRoute: AuthVerifyRoute,
   DevAuthRoute: DevAuthRoute,
   DevSeedRoute: DevSeedRoute,
   ShareTokenRoute: ShareTokenRoute,
