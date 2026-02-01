@@ -39,6 +39,19 @@ export const sessions = sqliteTable("sessions", {
 		.default(sql`(unixepoch())`),
 });
 
+export const magicLinks = sqliteTable("magic_links", {
+	id: text("id")
+		.primaryKey()
+		.$defaultFn(() => createId()),
+	email: text("email").notNull(),
+	token: text("token").notNull().unique(),
+	expires_at: integer("expires_at", { mode: "timestamp" }).notNull(),
+	used_at: integer("used_at", { mode: "timestamp" }),
+	created_at: integer("created_at", { mode: "timestamp" })
+		.notNull()
+		.default(sql`(unixepoch())`),
+});
+
 export const wishlists = sqliteTable("wishlists", {
 	id: text("id")
 		.primaryKey()
@@ -168,6 +181,8 @@ export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
 export type Session = typeof sessions.$inferSelect;
 export type NewSession = typeof sessions.$inferInsert;
+export type MagicLink = typeof magicLinks.$inferSelect;
+export type NewMagicLink = typeof magicLinks.$inferInsert;
 export type Wishlist = typeof wishlists.$inferSelect;
 export type NewWishlist = typeof wishlists.$inferInsert;
 export type Item = typeof items.$inferSelect;

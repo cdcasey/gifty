@@ -22,6 +22,13 @@
       "when": 1769913150130,
       "tag": "0002_magical_gargoyle",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1769913961829,
+      "tag": "0003_wet_slayback",
+      "breakpoints": true
     }
   ]
 }
