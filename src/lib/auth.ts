@@ -1,10 +1,6 @@
 import { createId } from "@paralleldrive/cuid2";
 import { createServerFn } from "@tanstack/react-start";
-import {
-	getCookie,
-	getRequestUrl,
-	setCookie,
-} from "@tanstack/react-start/server";
+import { getCookie, getRequestUrl, setCookie } from "@tanstack/react-start/server";
 import { env } from "cloudflare:workers";
 import { eq } from "drizzle-orm";
 
@@ -14,32 +10,26 @@ import { sendMagicLinkEmail } from "@/lib/email";
 
 const SESSION_COOKIE = "session";
 
-export const getCurrentUser = createServerFn({ method: "GET" }).handler(
-	async () => {
-		const sessionToken = getCookie(SESSION_COOKIE);
-		if (!sessionToken) return null;
+export const getCurrentUser = createServerFn({ method: "GET" }).handler(async () => {
+	const sessionToken = getCookie(SESSION_COOKIE);
+	if (!sessionToken) return null;
 
-		const db = getDb(env);
+	const db = getDb(env);
 
-		const [session] = await db
-			.select()
-			.from(sessions)
-			.where(eq(sessions.token, sessionToken))
-			.limit(1);
+	const [session] = await db
+		.select()
+		.from(sessions)
+		.where(eq(sessions.token, sessionToken))
+		.limit(1);
 
-		if (!session || session.expires_at < new Date()) {
-			return null;
-		}
+	if (!session || session.expires_at < new Date()) {
+		return null;
+	}
 
-		const [user] = await db
-			.select()
-			.from(users)
-			.where(eq(users.id, session.user_id))
-			.limit(1);
+	const [user] = await db.select().from(users).where(eq(users.id, session.user_id)).limit(1);
 
-		return user ?? null;
-	},
-);
+	return user ?? null;
+});
 
 export const logout = createServerFn({ method: "POST" }).handler(async () => {
 	const sessionToken = getCookie(SESSION_COOKIE);
@@ -108,17 +98,10 @@ export const verifyMagicLink = createServerFn({ method: "POST" })
 		}
 
 		// Mark as used
-		await db
-			.update(magicLinks)
-			.set({ used_at: new Date() })
-			.where(eq(magicLinks.id, link.id));
+		await db.update(magicLinks).set({ used_at: new Date() }).where(eq(magicLinks.id, link.id));
 
 		// Get or create user
-		let [user] = await db
-			.select()
-			.from(users)
-			.where(eq(users.email, link.email))
-			.limit(1);
+		let [user] = await db.select().from(users).where(eq(users.email, link.email)).limit(1);
 
 		if (!user) {
 			const [newUser] = await db
@@ -155,11 +138,7 @@ export const devLogin = createServerFn({ method: "POST" })
 	.handler(async ({ data }) => {
 		const db = getDb(env);
 
-		const [user] = await db
-			.select()
-			.from(users)
-			.where(eq(users.id, data.userId))
-			.limit(1);
+		const [user] = await db.select().from(users).where(eq(users.id, data.userId)).limit(1);
 
 		if (!user) {
 			throw new Error("User not found");

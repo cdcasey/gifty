@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as DbTestRouteImport } from './routes/db-test'
 import { Route as DashboardRouteImport } from './routes/dashboard'
 import { Route as IndexRouteImport } from './routes/index'
@@ -25,6 +26,11 @@ import { Route as DemoStartSsrSpaModeRouteImport } from './routes/demo/start.ssr
 import { Route as DemoStartSsrFullSsrRouteImport } from './routes/demo/start.ssr.full-ssr'
 import { Route as DemoStartSsrDataOnlyRouteImport } from './routes/demo/start.ssr.data-only'
 
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DbTestRoute = DbTestRouteImport.update({
   id: '/db-test',
   path: '/db-test',
@@ -105,6 +111,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/db-test': typeof DbTestRoute
+  '/login': typeof LoginRoute
   '/api/health': typeof ApiHealthRoute
   '/dev/auth': typeof DevAuthRoute
   '/dev/seed': typeof DevSeedRoute
@@ -122,6 +129,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/db-test': typeof DbTestRoute
+  '/login': typeof LoginRoute
   '/api/health': typeof ApiHealthRoute
   '/dev/auth': typeof DevAuthRoute
   '/dev/seed': typeof DevSeedRoute
@@ -140,6 +148,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/dashboard': typeof DashboardRoute
   '/db-test': typeof DbTestRoute
+  '/login': typeof LoginRoute
   '/api/health': typeof ApiHealthRoute
   '/dev/auth': typeof DevAuthRoute
   '/dev/seed': typeof DevSeedRoute
@@ -159,6 +168,7 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/db-test'
+    | '/login'
     | '/api/health'
     | '/dev/auth'
     | '/dev/seed'
@@ -176,6 +186,7 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/db-test'
+    | '/login'
     | '/api/health'
     | '/dev/auth'
     | '/dev/seed'
@@ -193,6 +204,7 @@ export interface FileRouteTypes {
     | '/'
     | '/dashboard'
     | '/db-test'
+    | '/login'
     | '/api/health'
     | '/dev/auth'
     | '/dev/seed'
@@ -211,6 +223,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   DashboardRoute: typeof DashboardRoute
   DbTestRoute: typeof DbTestRoute
+  LoginRoute: typeof LoginRoute
   ApiHealthRoute: typeof ApiHealthRoute
   DevAuthRoute: typeof DevAuthRoute
   DevSeedRoute: typeof DevSeedRoute
@@ -227,6 +240,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/db-test': {
       id: '/db-test'
       path: '/db-test'
@@ -339,6 +359,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   DashboardRoute: DashboardRoute,
   DbTestRoute: DbTestRoute,
+  LoginRoute: LoginRoute,
   ApiHealthRoute: ApiHealthRoute,
   DevAuthRoute: DevAuthRoute,
   DevSeedRoute: DevSeedRoute,
