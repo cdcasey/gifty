@@ -47,6 +47,21 @@ const seedDatabase = createServerFn({ method: "POST" }).handler(async () => {
 		{ wishlist_id: bobList.id, name: "Coffee subscription", priority: "normal" },
 	]);
 
+	// Create books
+	const [carolChristmasBook] = await db
+		.insert(books)
+		.values([
+			{ owner_id: carol.id, title: "Christmas 2025", cover_style: "leather", year: 2025 },
+			{ owner_id: alice.id, title: "Family Birthdays", cover_style: "fabric", year: 2025 },
+		])
+		.returning();
+
+	// Add wishlists to Carol's book
+	await db.insert(bookEntries).values([
+		{ book_id: carolChristmasBook.id, wishlist_id: aliceList.id },
+		{ book_id: carolChristmasBook.id, wishlist_id: bobList.id },
+	]);
+
 	return { users: [alice, bob, carol], wishlists: [aliceList, bobList] };
 });
 
