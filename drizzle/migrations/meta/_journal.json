@@ -15,6 +15,13 @@
       "when": 1767837834954,
       "tag": "0001_damp_lockjaw",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1769913150130,
+      "tag": "0002_magical_gargoyle",
+      "breakpoints": true
     }
   ]
 }
