@@ -12,36 +12,44 @@ import { getDb } from "@/db/client";
 import { magicLinks, sessions, users } from "@/db/schema";
 import { sendMagicLinkEmail } from "@/lib/email";
 
-const MOCK_USER_COOKIE = "mock_user_id";
+const SESSION_COOKIE = "session";
 
 export const getCurrentUser = createServerFn({ method: "GET" }).handler(
 	async () => {
-		const userId = getCookie(MOCK_USER_COOKIE);
-		if (!userId) return null;
+		const sessionToken = getCookie(SESSION_COOKIE);
+		if (!sessionToken) return null;
 
 		const db = getDb(env);
+
+		const [session] = await db
+			.select()
+			.from(sessions)
+			.where(eq(sessions.token, sessionToken))
+			.limit(1);
+
+		if (!session || session.expires_at < new Date()) {
+			return null;
+		}
 
 		const [user] = await db
 			.select()
 			.from(users)
-			.where(eq(users.id, userId))
+			.where(eq(users.id, session.user_id))
 			.limit(1);
-
-		// Keeping for reference. Equivalent.
-		// const user = await db.query.users.findFirst({
-		// 	where: eq(users.id, userId),
-		// });
 
 		return user ?? null;
 	},
 );
 
-// TODO: add Zod validation schema for the inputValidator function
-export const setMockUser = createServerFn({ method: "POST" })
-	.inputValidator((data: { userId: string }) => data)
-	.handler(async ({ data }) => {
-		setCookie(MOCK_USER_COOKIE, data.userId, { httpOnly: true, path: "/" });
-	});
+export const logout = createServerFn({ method: "POST" }).handler(async () => {
+	const sessionToken = getCookie(SESSION_COOKIE);
+	if (sessionToken) {
+		const db = getDb(env);
+		await db.delete(sessions).where(eq(sessions.token, sessionToken));
+	}
+	setCookie(SESSION_COOKIE, "", { httpOnly: true, path: "/", maxAge: 0 });
+	return { success: true };
+});
 
 export const requestMagicLink = createServerFn({ method: "POST" })
 	.inputValidator((data: { email: string }) => {
