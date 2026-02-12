@@ -21,6 +21,33 @@ export const getUserBooks = createServerFn({ method: "GET" })
 		return userBooks;
 	});
 
+export const createBook = createServerFn({ method: "POST" })
+	.inputValidator(
+		(data: {
+			title: string;
+			year: number;
+			cover_style?: "leather" | "fabric" | "paper" | "vintage";
+		}) => data,
+	)
+	.handler(async ({ data }) => {
+		const user = await getCurrentUser();
+		if (!user) throw new Error("Not authenticated");
+
+		const db = getDb(env);
+
+		const [book] = await db
+			.insert(books)
+			.values({
+				owner_id: user.id,
+				title: data.title,
+				year: data.year,
+				cover_style: data.cover_style || "leather",
+			})
+			.returning();
+
+		return book;
+	});
+
 export const addWishlistToBook = createServerFn({ method: "POST" })
 	.inputValidator((data: { bookId: string; wishlistId: string }) => data)
 	.handler(async ({ data }) => {

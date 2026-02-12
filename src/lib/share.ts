@@ -1,10 +1,10 @@
 import { createId } from "@paralleldrive/cuid2";
 import { createServerFn } from "@tanstack/react-start";
 import { env } from "cloudflare:workers";
-import { and, eq } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 
 import { getDb } from "@/db/client";
-import { users, wishlists, wishlistShares } from "@/db/schema";
+import { users, wishlists, wishlistShares, items } from "@/db/schema";
 import { getCurrentUser } from "./auth";
 
 export const generateShareToken = createServerFn({ method: "POST" })
@@ -96,3 +96,41 @@ export const getSharedWishlists = createServerFn({ method: "GET" }).handler(asyn
 
 	return shared;
 });
+
+export const getWishlistStats = createServerFn({ method: "GET" })
+	.inputValidator((wishlistId: string) => wishlistId)
+	.handler(async ({ data: wishlistId }) => {
+		const user = await getCurrentUser();
+		if (!user) throw new Error("Not authenticated");
+
+		const db = getDb(env);
+
+		// Get wishlist
+		const [wishlist] = await db
+			.select()
+			.from(wishlists)
+			.where(eq(wishlists.id, wishlistId))
+			.limit(1);
+
+		if (!wishlist) throw new Error("Wishlist not found");
+
+		// Count items
+		const itemCountResult = await db
+			.select({ count: sql<number>`count(*)` })
+			.from(items)
+			.where(eq(items.wishlist_id, wishlistId));
+		const itemCount = Number(itemCountResult[0]?.count || 0);
+
+		// Count shares (viewers)
+		const shareCountResult = await db
+			.select({ count: sql<number>`count(*)` })
+			.from(wishlistShares)
+			.where(eq(wishlistShares.wishlist_id, wishlistId));
+		const viewerCount = Number(shareCountResult[0]?.count || 0);
+
+		return {
+			itemCount,
+			viewerCount,
+			shouldNudge: itemCount < 5 && viewerCount > 0,
+		};
+	});

@@ -1,8 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
 import { env } from "cloudflare:workers";
-import { generateShareToken } from "@/lib/share";
+import { generateShareToken, getWishlistStats } from "@/lib/share";
+import { archiveWishlist, unarchiveWishlist } from "@/lib/archive";
 
 import { getDb } from "@/db/client";
 import { items } from "@/db/schema";
@@ -11,8 +12,10 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { ItemRow } from "@/components/ItemRow";
 import { getWishlistItemsWithDibs } from "@/lib/dibs";
+import { Archive, ArchiveRestore, AlertCircle } from "lucide-react";
 
 const createItem = createServerFn({ method: "POST" })
 	.inputValidator(
@@ -65,6 +68,13 @@ function ShareButton({ wishlistId }: { wishlistId: string }) {
 
 function ViewWishlist() {
 	const { wishlist, items, isOwner, currentUserId } = Route.useLoaderData();
+	const [stats, setStats] = useState<{ itemCount: number; viewerCount: number; shouldNudge: boolean } | null>(null);
+
+	useEffect(() => {
+		if (isOwner) {
+			getWishlistStats({ data: wishlist.id }).then(setStats);
+		}
+	}, [wishlist.id, isOwner]);
 
 	const handleAddItem = async (e: React.FormEvent<HTMLFormElement>) => {
 		e.preventDefault();
@@ -83,13 +93,70 @@ function ViewWishlist() {
 		window.location.reload();
 	};
 
+	const handleArchive = async () => {
+		if (!confirm("Archive this wishlist? It will be hidden but can be restored later.")) return;
+		await archiveWishlist({ data: wishlist.id });
+		window.location.href = "/dashboard";
+	};
+
+	const handleUnarchive = async () => {
+		await unarchiveWishlist({ data: wishlist.id });
+		window.location.reload();
+	};
+
+	const isExpired = wishlist.deadline && new Date(wishlist.deadline) < new Date();
+
 	return (
-		<div>
-			<Link to="/dashboard">← back</Link>
-			<div className="flex items-center gap-4">
-				<h1>{wishlist.title}</h1>
-				{isOwner && <ShareButton wishlistId={wishlist.id} />}
+		<div className="p-6">
+			<Link to="/dashboard" className="text-blue-500 hover:underline">← back</Link>
+			<div className="flex items-center gap-4 mt-4">
+				<div className="flex-1">
+					<h1 className="text-3xl font-bold">{wishlist.title}</h1>
+					{wishlist.is_archived && (
+						<span className="inline-flex items-center gap-1 text-sm bg-yellow-100 text-yellow-800 px-2 py-1 rounded mt-2">
+							<Archive className="h-3 w-3" />
+							Archived
+						</span>
+					)}
+					{isExpired && !wishlist.is_archived && (
+						<span className="inline-flex items-center gap-1 text-sm bg-red-100 text-red-800 px-2 py-1 rounded mt-2">
+							Expired
+						</span>
+					)}
+					{wishlist.deadline && (
+						<p className="text-sm text-muted-foreground mt-1">
+							Deadline: {new Date(wishlist.deadline).toLocaleDateString()}
+						</p>
+					)}
+				</div>
+				{isOwner && (
+					<div className="flex gap-2">
+						<ShareButton wishlistId={wishlist.id} />
+						{wishlist.is_archived ? (
+							<Button variant="outline" onClick={handleUnarchive}>
+								<ArchiveRestore className="h-4 w-4 mr-2" />
+								Unarchive
+							</Button>
+						) : (
+							<Button variant="outline" onClick={handleArchive}>
+								<Archive className="h-4 w-4 mr-2" />
+								Archive
+							</Button>
+						)}
+					</div>
+				)}
 			</div>
+
+			{/* Nudge for small lists with multiple viewers */}
+			{isOwner && stats?.shouldNudge && (
+				<Alert className="my-4 bg-blue-50 border-blue-200">
+					<AlertCircle className="h-4 w-4 text-blue-600" />
+					<AlertDescription className="text-blue-800">
+						<strong>Tip:</strong> You've shared this wishlist with {stats.viewerCount} {stats.viewerCount === 1 ? "person" : "people"}, but only have {stats.itemCount} {stats.itemCount === 1 ? "item" : "items"}.
+						Consider adding a few more items to give them more options!
+					</AlertDescription>
+				</Alert>
+			)}
 
 			<form onSubmit={handleAddItem} className="space-y-3 my-4 max-w-md">
 				<Input name="name" placeholder="Item name" required />

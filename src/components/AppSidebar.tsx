@@ -1,5 +1,9 @@
 import { Link } from '@tanstack/react-router'
 import { Book, Home, Settings, Share2 } from 'lucide-react'
+import { getUserBooks } from '@/lib/books'
+import { useServerFn } from '@tanstack/react-start'
+import { useEffect, useState } from 'react'
+import type { Book as BookType } from '@/db/schema'
 
 import {
   Sidebar,
@@ -14,8 +18,12 @@ import {
 } from '@/components/ui/sidebar'
 
 export function AppSidebar() {
-  // TODO: Load books from getUserBooks server function
-  const books: { id: string; title: string; year: number }[] = []
+  const [books, setBooks] = useState<BookType[]>([])
+  const getBooks = useServerFn(getUserBooks)
+
+  useEffect(() => {
+    getBooks().then(setBooks)
+  }, [])
 
   return (
     <Sidebar>
@@ -57,11 +65,10 @@ export function AppSidebar() {
                 books.map((book) => (
                   <SidebarMenuItem key={book.id}>
                     <SidebarMenuButton asChild>
-                      {/* TODO: Link to /books/$id once route exists */}
-                      <Link to="/dashboard" search={{ bookId: book.id }}>
+                      <a href={`/books/${book.id}`}>
                         <Book />
                         <span>{book.title}</span>
-                      </Link>
+                      </a>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 ))
